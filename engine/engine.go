@@ -5,11 +5,9 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strconv"
 	"sync"
 	"time"
 
-	"github.com/anacrolix/dht"
 	"github.com/anacrolix/torrent"
 	"github.com/anacrolix/torrent/metainfo"
 )
@@ -40,18 +38,22 @@ func (e *Engine) Configure(c Config) error {
 	if c.IncomingPort <= 0 {
 		return fmt.Errorf("Invalid incoming port (%d)", c.IncomingPort)
 	}
-	tc := torrent.Config{
-		DHTConfig: dht.ServerConfig{
-			StartingNodes: dht.GlobalBootstrapAddrs,
-		},
-		DataDir:    c.DownloadDirectory,
-		ListenAddr: "0.0.0.0:" + strconv.Itoa(c.IncomingPort),
-		NoUpload:   !c.EnableUpload,
-		Seed:       c.EnableSeeding,
-	}
-	tc.DisableEncryption = c.DisableEncryption
+	//tc := torrent.ClientConfig{
+	//	DHTConfig: dht.ServerConfig{
+	//		StartingNodes: dht.GlobalBootstrapAddrs,
+	//	},
+	//	DataDir:    c.DownloadDirectory,
+	//	ListenHost: func(network string) string {
+	//		return "0.0.0.0:" + strconv.Itoa(c.IncomingPort)
+	//	},
+	//	NoUpload:   !c.EnableUpload,
+	//	Seed:       c.EnableSeeding,
+	//}
 
-	client, err := torrent.NewClient(&tc)
+	tc := torrent.NewDefaultClientConfig()
+	//tc.DisableEncryption = c.DisableEncryption
+
+	client, err := torrent.NewClient(tc)
 	if err != nil {
 		return err
 	}
@@ -218,7 +220,7 @@ func (e *Engine) StartFile(infohash, filepath string) error {
 	}
 	t.Started = true
 	f.Started = true
-	f.f.PrioritizeRegion(0, f.Size)
+	//f.f.PrioritizeRegion(0, f.Size)
 	return nil
 }
 

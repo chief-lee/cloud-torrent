@@ -1,10 +1,9 @@
 package main
 
 import (
-	"log"
-
-	"github.com/jpillora/cloud-torrent/server"
+	"cloud-torrent/server"
 	"github.com/jpillora/opts"
+	"log"
 )
 
 var VERSION = "0.0.0-src" //set with ldflags
@@ -19,8 +18,8 @@ func main() {
 	o := opts.New(&s)
 	o.Version(VERSION)
 	o.PkgRepo()
-	o.LineWidth = 96
 	o.Parse()
+	o.SetLineWidth(96)
 
 	if err := s.Run(VERSION); err != nil {
 		log.Fatal(err)
